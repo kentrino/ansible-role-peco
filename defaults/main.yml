@@ -1,2 +1,4 @@
 ---
-version: 0.5.1
+peco_version: 0.5.1
+peco_privilege_escalation: true
+peco_installation_directory: /usr/local/bin

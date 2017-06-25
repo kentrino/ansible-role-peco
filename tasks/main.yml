@@ -1,13 +1,13 @@
 ---
 - name: Check peco installation
-  shell: /usr/local/bin/peco --version | grep {{version}} 
+  shell: "{{peco_installation_directory}}/peco --version | grep {{peco_version}}"
   register: installed
   ignore_errors: true
   changed_when: false
 
 - name: Download
   get_url: 
-    url: https://github.com/peco/peco/releases/download/v{{version}}/peco_linux_amd64.tar.gz
+    url: https://github.com/peco/peco/releases/download/v{{peco_version}}/peco_linux_amd64.tar.gz
     dest: /tmp/peco_linux_amd64.tar.gz
   register: download
   when: 
@@ -15,16 +15,20 @@
 
 - name: Extract
   unarchive:
+    copy: no
     src: /tmp/peco_linux_amd64.tar.gz
     dest: /tmp
-    remote_src: true
   when:
     - installed.rc != 0
     - download | success
 
 - name: Install
-  become: true
-  command: mv /tmp/peco_linux_amd64/peco /usr/local/bin/peco
+  become: "{{peco_privilege_escalation}}"
+  copy:
+    remote_src: true
+    src: /tmp/peco_linux_amd64/peco
+    dest: "{{peco_installation_directory}}/peco"
+    mode: 0755
   when:
     - installed.rc != 0
     - download | success
