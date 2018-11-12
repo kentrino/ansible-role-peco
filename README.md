@@ -16,7 +16,7 @@ Example Playbook
 hosts: servers
 roles:
    - role: kentrino.peco
-     peco_version: 0.5.1
+     peco_version: 0.5.3
 ```
 
 License
