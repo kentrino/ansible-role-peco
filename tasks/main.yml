@@ -5,30 +5,15 @@
   ignore_errors: true
   changed_when: false
 
-- name: Download
-  get_url: 
-    url: https://github.com/peco/peco/releases/download/v{{peco_version}}/peco_linux_amd64.tar.gz
-    dest: /tmp/peco_linux_amd64.tar.gz
-  register: download
-  when: 
-    - installed.rc != 0
-
-- name: Extract
-  unarchive:
-    copy: no
-    src: /tmp/peco_linux_amd64.tar.gz
-    dest: /tmp
-  when:
-    - installed.rc != 0
-    - download | success
-
 - name: Install
   become: "{{peco_privilege_escalation}}"
-  copy:
+  unarchive:
     remote_src: true
-    src: /tmp/peco_linux_amd64/peco
+    src: https://github.com/peco/peco/releases/download/v{{peco_version}}/peco_linux_amd64.tar.gz
     dest: "{{peco_installation_directory}}/peco"
     mode: 0755
-  when:
-    - installed.rc != 0
-    - download | success
+    owner: root
+    group: root
+    extra_opts:
+      - --strip-components=1
+      - peco_linux_amd64/peco
